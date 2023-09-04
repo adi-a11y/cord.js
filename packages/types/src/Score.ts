@@ -5,8 +5,8 @@ export const SCORE_IDENTIFIER: number = 101
 export const SCORE_PREFIX: string = 'score:cord:'
 
 export enum ScoreType {
-  overall = 'overall',
-  delivery = 'delivery',
+  overall = 'Overall',
+  delivery = 'Delivery',
 }
 
 export interface IJournalContent {
@@ -15,8 +15,13 @@ export interface IJournalContent {
   tid: string
   collector: IPublicIdentity['address']
   requestor: IPublicIdentity['address']
-  scoreType: ScoreType
-  score: number
+  rating_type: ScoreType
+}
+
+export interface IRatingInput {
+  journalContent: IJournalContent,
+  hash:string,
+  auth:string
 }
 
 export interface IJournal {
@@ -34,7 +39,7 @@ export interface IJournalDetails {
 
 export interface IScoreAggregateDetails {
   entity: IJournalContent['entity']
-  scoreType: ScoreType
+  rating_type:ScoreType
   aggregate: {
     count: number
     score: number
@@ -42,7 +47,7 @@ export interface IScoreAggregateDetails {
 }
 export interface IScoreAverageDetails {
   entity: IJournalContent['entity']
-  scoreType: ScoreType
+  rating_type: ScoreType
   average: {
     count: number
     score: number
