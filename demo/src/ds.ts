@@ -22,7 +22,7 @@ import { generateRequestCredentialMessage } from './utils/request_credential_mes
 import { getChainCredits, addAuthority } from './utils/createAuthorities'
 import { createAccount } from './utils/createAccount'
 import { updateStream } from './utils/updateDocument'
-import { ScoreType , IJournalContent, IRatingInput} from '@cord.network/types'
+import { ScoreType , IJournalContent, IRatingInput , EntryType} from '@cord.network/types'
 
 // import type {
 //   SignCallback,
@@ -287,6 +287,8 @@ let registry;
       collector: collectorDid.uri.replace('did:cord:', ''),
       requestor: requestorDid.uri.replace('did:cord:', ''),
       rating_type: ScoreType.overall,
+      entry_type: EntryType.credit,
+      count: 3
     }
     console.dir(journalContent, { depth: null, colors: true })
 

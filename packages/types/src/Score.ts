@@ -8,6 +8,10 @@ export enum ScoreType {
   overall = 'Overall',
   delivery = 'Delivery',
 }
+export enum EntryType {
+  credit = 'credit',
+  debit = 'debit',
+}
 
 export interface IJournalContent {
   entity: IPublicIdentity['address']
@@ -16,6 +20,9 @@ export interface IJournalContent {
   collector: IPublicIdentity['address']
   requestor: IPublicIdentity['address']
   rating_type: ScoreType
+  rating: number
+  entry_type: EntryType
+  count: number
 }
 
 export interface IRatingInput {
