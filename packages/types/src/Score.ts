@@ -9,8 +9,8 @@ export enum ScoreType {
   delivery = 'Delivery',
 }
 export enum EntryType {
-  credit = 'credit',
-  debit = 'debit',
+  credit = 'Credit',
+  debit = 'Debit',
 }
 
 export interface IJournalContent {

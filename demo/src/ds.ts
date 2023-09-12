@@ -287,6 +287,7 @@ let registry;
       collector: collectorDid.uri.replace('did:cord:', ''),
       requestor: requestorDid.uri.replace('did:cord:', ''),
       rating_type: ScoreType.overall,
+      rating: 10,
       entry_type: EntryType.credit,
       count: 3
     }
