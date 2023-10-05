@@ -65,7 +65,6 @@ export interface IScoreAggregateDetails {
   }
 }
 export interface IScoreAverageDetails {
-  entity: IJournalContent['entity']
   scoreType: ScoreType
   average: {
     count: number

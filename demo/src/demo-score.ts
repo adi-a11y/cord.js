@@ -8,13 +8,15 @@ import { addAuthority } from './utils/createAuthorities'
 import { createAccount } from './utils/createAccount'
 import { updateScore } from './utils/updateScore'
 import { ScoreType, IJournalContent, EntryType } from '@cord.network/types'
-
+import { base58Decode, base58Encode, blake2AsU8a } from '@polkadot/util-crypto'
 async function main() {
   const networkAddress = 'ws://127.0.0.1:56687'
   Cord.ConfigService.set({ submitTxResolveOn: Cord.Chain.IS_IN_BLOCK })
   await Cord.connect(networkAddress)
 
   const api = Cord.ConfigService.get('api')
+  let encodedDid = await api.query.did.did('3xjF5679cfFEV67jaJ2KTqmdNGWzf4jQkbWBrmE12ibBKmD1')
+  console.log('\n\n\nencodedDid.toString()\n',encodedDid.toString())
 
   console.log(`\n❄️   New Member`)
   const authorityAuthorIdentity = Crypto.makeKeypairFromUri(
@@ -155,7 +157,37 @@ async function main() {
     '\n✅ The score has been successfully anchored on the blockchain \nIdentifier:',
     scoreIdentifier
   )
+
+  console.log('\nTesting fetchAverageScore\n')
+  let pertialDidUri = sellerDid.uri.replace('did:cord:','')
+  console.log('pertialDidUri',pertialDidUri)
+
+  // let hex = '';
+  // for (let i = 0; i < pertialDidUri.length; i++) {
+  //   // Get the ASCII code of each character in the string
+  //   const charCode = pertialDidUri.charCodeAt(i);
+  //   // Convert the ASCII code to a hexadecimal representation with two digits
+  //   const hexCode = charCode.toString(16).padStart(2, '0');
+  //   // Concatenate the hexadecimal representation
+  //   hex += hexCode;
+  // }
+
+  // const hexString = '0x' + Buffer.from(pertialDidUri, 'utf-8').toString('hex');
+  // const encoder = new TextEncoder();
+  // const uint8Array = encoder.encode(pertialDidUri);
+  // console.log(uint8Array)
+  // const hexString = Array.from(uint8Array, byte => byte.toString(16).padStart(2, '0')).join('');
+  //let encoded = base58Encode(sellerDid.uri)
+  // Cord.Scoring.fetchAverageScore(pertialDidUri,ScoreType)
+  try{
+    const encode = api.query.scoring.scores(pertialDidUri,`Overall`)
+  }
+  catch(e){
+    console.log(e.message)
+  }
+  
 }
+
 
 main()
   .then(() => console.log('\nBye! 👋 👋 👋 '))
