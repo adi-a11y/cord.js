@@ -1,7 +1,7 @@
-import { DidUri, ScoreType ,scoreDetails,IScoreAverageDetails} from '@cord.network/types'
+import { ScoreType, scoreDetails, IScoreDetails } from '@cord.network/types'
 import { ConfigService } from '@cord.network/config'
 import { Identifier, SDKErrors } from '@cord.network/utils'
-import type { PalletScoringRatingEntry,PalletScoringRatingTypeOf } from '@cord.network/augment-api'
+import type { PalletScoringRatingEntry } from '@cord.network/augment-api'
 import type { Option } from '@polkadot/types'
 import * as Did from '@cord.network/did'
 
@@ -29,7 +29,7 @@ export function fromChain(
   if (encodedEntry.isSome) {
     const unwrapped = encodedEntry.unwrap()
     return {
-      entity: Did.fromChain(unwrapped.entry.entity),  
+      entity: Did.fromChain(unwrapped.entry.entity),
       tid: unwrapped.entry.tid.toHuman(),
       collector: Did.fromChain(unwrapped.entry.collector),
       rating_type: unwrapped.entry.ratingType.toString(),
@@ -41,10 +41,21 @@ export function fromChain(
     return null
   }
 }
-// Promise<IScoreAverageDetails | null>
-export async function fetchAverageScore(entity:string, scoreType: string):Promise<void>{
+
+export async function fetchScore(
+  entityUri: string,
+  scoreType: ScoreType
+): Promise<IScoreDetails> {
   const api = ConfigService.get('api')
-  
-  const encoded = await api.query.scoring.scores(entity.toHex(), ScoreType.overall, ScoreType.overall)
-  console.log('encoded',encoded)
+  const encoded = await api.query.scoring.scores(entityUri, scoreType)
+  if (encoded.isSome) {
+    const decoded = encoded.unwrap()
+    return {
+      rating: JSON.parse(decoded.rating.toString()),
+      count: JSON.parse(decoded.count.toString()),
+    }
+  } else
+    throw new SDKErrors.ScoreMissingError(
+      `There is not a Score of type ${scoreType} with the provided ID "${entityUri}" on chain.`
+    )
 }

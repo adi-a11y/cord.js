@@ -1,6 +1,5 @@
 import * as Cord from '@cord.network/sdk'
-import { IJournalContent, IratingInput, ScoreType } from '@cord.network/types'
-import { Crypto } from '@cord.network/utils'
+import { IJournalContent, IratingInput } from '@cord.network/types'
 
 /**
  * This function anchors the score on the blockchain

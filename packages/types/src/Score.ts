@@ -3,7 +3,7 @@ import { HexString } from '@polkadot/util/types.js'
 
 export const SCORE_IDENTIFIER: number = 101
 export const SCORE_PREFIX: string = 'score:cord:'
-export const SCORE_MULTIPLIER: number = 10
+export const SCORE_MODULUS: number = 10
 export const SCORE_IDENT: number = 11034
 
 export enum ScoreType {
@@ -15,15 +15,22 @@ export enum EntryType {
   debit = 'Debit',
 }
 
-type AnyJson = null | undefined | boolean | number | string | Array<AnyJson> | { [key: string]: AnyJson };
+type AnyJson =
+  | null
+  | undefined
+  | boolean
+  | number
+  | string
+  | Array<AnyJson>
+  | { [key: string]: AnyJson }
 
-export interface scoreDetails{
-  entity: string,
-  tid:AnyJson,
-  collector:string,
-  rating_type:string,
-  rating:number,
-  entry_type:string,
+export interface scoreDetails {
+  entity: string
+  tid: AnyJson
+  collector: string
+  rating_type: string
+  rating: number
+  entry_type: string
   count: number
 }
 
@@ -38,9 +45,9 @@ export interface IJournalContent {
 }
 
 export interface IratingInput {
-  entry: IJournalContent,
-  digest: string,
-  creator: string,
+  entry: IJournalContent
+  digest: string
+  creator: string
 }
 
 export interface IJournal {
@@ -64,10 +71,14 @@ export interface IScoreAggregateDetails {
     score: number
   }
 }
+
 export interface IScoreAverageDetails {
-  scoreType: ScoreType
-  average: {
-    count: number
-    score: number
-  }
+  rating: number
+  count: number
+  average: number
+}
+
+export interface IScoreDetails {
+  rating: number
+  count: number
 }
