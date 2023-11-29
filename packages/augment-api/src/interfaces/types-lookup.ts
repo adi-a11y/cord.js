@@ -1549,8 +1549,8 @@ declare module '@polkadot/types/lookup' {
     readonly submitter: AccountId32;
   }
 
-  /** @name SpCoreVoid (165) */
-  type SpCoreVoid = Null;
+  // /** @name SpCoreVoid (165) */
+  // type SpCoreVoid = Null;
 
   /** @name PalletMultisigCall (166) */
   interface PalletMultisigCall extends Enum {
@@ -2690,23 +2690,23 @@ declare module '@polkadot/types/lookup' {
   /** @name PalletNetworkMembershipCheckNetworkMembership (385) */
   type PalletNetworkMembershipCheckNetworkMembership = Null;
 
-  /** @name FrameSystemExtensionsCheckNonZeroSender (386) */
-  type FrameSystemExtensionsCheckNonZeroSender = Null;
+  // /** @name FrameSystemExtensionsCheckNonZeroSender (386) */
+  // type FrameSystemExtensionsCheckNonZeroSender = Null;
 
-  /** @name FrameSystemExtensionsCheckSpecVersion (387) */
-  type FrameSystemExtensionsCheckSpecVersion = Null;
+  // /** @name FrameSystemExtensionsCheckSpecVersion (387) */
+  // type FrameSystemExtensionsCheckSpecVersion = Null;
 
-  /** @name FrameSystemExtensionsCheckTxVersion (388) */
-  type FrameSystemExtensionsCheckTxVersion = Null;
+  // /** @name FrameSystemExtensionsCheckTxVersion (388) */
+  // type FrameSystemExtensionsCheckTxVersion = Null;
 
-  /** @name FrameSystemExtensionsCheckGenesis (389) */
-  type FrameSystemExtensionsCheckGenesis = Null;
+  // /** @name FrameSystemExtensionsCheckGenesis (389) */
+  // type FrameSystemExtensionsCheckGenesis = Null;
 
   /** @name FrameSystemExtensionsCheckNonce (392) */
   interface FrameSystemExtensionsCheckNonce extends Compact<u32> {}
 
-  /** @name FrameSystemExtensionsCheckWeight (393) */
-  type FrameSystemExtensionsCheckWeight = Null;
+  // /** @name FrameSystemExtensionsCheckWeight (393) */
+  // type FrameSystemExtensionsCheckWeight = Null;
 
   /** @name CordRuntimeRuntime (394) */
   type CordRuntimeRuntime = Null;

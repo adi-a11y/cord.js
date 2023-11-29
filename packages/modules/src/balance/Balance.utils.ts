@@ -77,9 +77,9 @@ export function balanceNumberToString(input: BalanceNumber): string {
     return input
   }
   if (
-    typeof input === 'number' ||
-    (typeof input === 'bigint' && input.toString) ||
-    (typeof input === 'object' && input instanceof BN && input.toString)
+    typeof input === 'number' || 1
+    // (typeof input === 'bigint' && input.toString) ||
+    // (typeof input === 'object' && input instanceof BN && input.toString)
   ) {
     return input.toString()
   }
