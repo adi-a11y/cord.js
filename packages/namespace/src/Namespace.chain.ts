@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @module Namespace/chain
@@ -47,15 +46,13 @@
  * - Create a namespace to maintain a namespace of various types.
  * - Archive and restore a namespace for future use.
  * - Revoke and reinstate namespace based on inactivity or violations.
- * - Add delegates to a namespace to ensure compliance with governance standards & use this 
+ * - Add delegates to a namespace to ensure compliance with governance standards & use this
  *  to manage the namespace & namespace too.
  */
 
-import {
-    CordKeyringPair,
-} from '@cord.network/types'
+import { CordKeyringPair } from '@cord.network/types'
 
-import { Option } from '@polkadot/types';
+import { Option } from '@polkadot/types'
 
 import { Chain } from '@cord.network/network'
 
@@ -63,25 +60,26 @@ import { SDKErrors } from '@cord.network/utils'
 
 import { ConfigService } from '@cord.network/config'
 
-import { 
-    INamespaceCreate, 
-    NamespaceAuthorizationUri,
-    NamespaceUri,
-    NamespacePermissionType,
-    NamespacePermission,
-    INamespaceAuthorization
-} from '@cord.network/types';
-
 import {
-  uriToIdentifier,
-} from '@cord.network/identifier'
-import { PalletNamespaceNameSpaceAuthorization, PalletNamespaceNameSpaceDetails } from '@cord.network/augment-api';
+  INamespaceCreate,
+  NamespaceAuthorizationUri,
+  NamespaceUri,
+  NamespacePermissionType,
+  NamespacePermission,
+  INamespaceAuthorization,
+  INamespaceUpdate,
+} from '@cord.network/types'
 
+import { uriToIdentifier } from '@cord.network/identifier'
+import {
+  PalletNamespaceNameSpaceAuthorization,
+  PalletNamespaceNameSpaceDetails,
+} from '@cord.network/augment-api'
 
 /**
  * Checks if a namespace is stored on the CORD blockchain.
  *
- * This function queries the blockchain to verify whether a namespace with the given URI 
+ * This function queries the blockchain to verify whether a namespace with the given URI
  * exists. It converts the URI to an identifier and checks the corresponding entry in the
  * namespace storage. If the namespace exists, it returns `true`; otherwise, it returns `false`.
  *
@@ -95,12 +93,14 @@ import { PalletNamespaceNameSpaceAuthorization, PalletNamespaceNameSpaceDetails 
  * console.log('Namespace exists:', namespaceExists);
  */
 export async function isNamespaceStored(
-    namespaceUri: NamespaceUri
+  namespaceUri: NamespaceUri
 ): Promise<boolean> {
   try {
-    const api = ConfigService.get('api');
-    const identifier = uriToIdentifier(namespaceUri);
-    const encoded = await api.query.nameSpace.nameSpaces(identifier) as Option<PalletNamespaceNameSpaceDetails>;
+    const api = ConfigService.get('api')
+    const identifier = uriToIdentifier(namespaceUri)
+    const encoded = (await api.query.nameSpace.nameSpaces(
+      identifier
+    )) as Option<PalletNamespaceNameSpaceDetails>
 
     return !encoded.isNone
   } catch (error) {
@@ -110,12 +110,11 @@ export async function isNamespaceStored(
   }
 }
 
-
 /**
  * Dispatches a request to create a new namespace on the CORD blockchain.
  *
  * This function checks if a namespace already exists at the specified URI. If it does,
- * an error is thrown. If the namespace does not exist, it creates a new namespace using 
+ * an error is thrown. If the namespace does not exist, it creates a new namespace using
  * the provided details and submits the transaction to the chain.
  *
  * @param namespaceDetails - An object containing the details required to create the namespace, including:
@@ -138,40 +137,40 @@ export async function isNamespaceStored(
  * console.log('Created Namespace URI:', newNamespace.uri);
  */
 export async function dispatchCreateToChain(
-    namespaceDetails: INamespaceCreate,
-    authorAccount: CordKeyringPair
-): Promise<{ uri: NamespaceUri, authorizationUri: NamespaceAuthorizationUri }> {
-    const namespaceObj = {
-        uri: namespaceDetails.uri,
-        authorizationUri: namespaceDetails.authorizationUri
-    }
+  namespaceDetails: INamespaceCreate,
+  authorAccount: CordKeyringPair
+): Promise<{ uri: NamespaceUri; authorizationUri: NamespaceAuthorizationUri }> {
+  const namespaceObj = {
+    uri: namespaceDetails.uri,
+    authorizationUri: namespaceDetails.authorizationUri,
+  }
 
-    const namespaceExists = await isNamespaceStored(namespaceDetails.uri);
+  const namespaceExists = await isNamespaceStored(namespaceDetails.uri)
 
-    if (namespaceExists) {
-        throw new SDKErrors.CordDispatchError(
-            `Namespace already exists at URI: "${namespaceDetails.uri}".`
-        );
-    }
+  if (namespaceExists) {
+    throw new SDKErrors.CordDispatchError(
+      `Namespace already exists at URI: "${namespaceDetails.uri}".`
+    )
+  }
 
-    try {
-        const api = ConfigService.get('api'); 
+  try {
+    const api = ConfigService.get('api')
 
-        const extrinsic = api.tx.nameSpace.create(
-            namespaceDetails.digest,
-            namespaceDetails.blob
-        );
+    const extrinsic = api.tx.nameSpace.create(
+      namespaceDetails.digest,
+      namespaceDetails.blob
+    )
 
-        await Chain.signAndSubmitTx(extrinsic, authorAccount);
+    await Chain.signAndSubmitTx(extrinsic, authorAccount)
 
-        return namespaceObj;
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : JSON.stringify(error);
-        throw new SDKErrors.CordDispatchError(
-            `Error dispatching to chain: "${errorMessage}".`
-        );
-    }
+    return namespaceObj
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error)
+    throw new SDKErrors.CordDispatchError(
+      `Error dispatching to chain: "${errorMessage}".`
+    )
+  }
 }
 
 /**
@@ -198,7 +197,7 @@ export async function dispatchCreateToChain(
  *     'authorizationId789'
  * );
  * console.log('Extrinsic to be dispatched:', extrinsic);
- * 
+ *
  */
 function dispatchDelegateAuthorizationTx(
   permission: NamespacePermissionType,
@@ -211,22 +210,22 @@ function dispatchDelegateAuthorizationTx(
   switch (permission) {
     case NamespacePermission.ASSERT:
       return api.tx.nameSpace.addDelegate(
-        namespaceId, 
-        delegateId, 
+        namespaceId,
+        delegateId,
         authorizationId
-    )
+      )
     case NamespacePermission.DELEGATE:
       return api.tx.nameSpace.addDelegator(
-        namespaceId, 
-        delegateId, 
+        namespaceId,
+        delegateId,
         authorizationId
-    )
+      )
     case NamespacePermission.ADMIN:
       return api.tx.nameSpace.addAdminDelegate(
-        namespaceId, 
-        delegateId, 
+        namespaceId,
+        delegateId,
         authorizationId
-    )
+      )
     default:
       throw new SDKErrors.InvalidPermissionError(
         `Permission not valid:"${permission}".`
@@ -242,7 +241,7 @@ function dispatchDelegateAuthorizationTx(
  * It submits the transaction to the chain and throws an error if any step fails.
  *
  * @param request - The authorization request object, containing the namespace URI, delegate URI, and permission.
- * @param namespaceAuthorizationUri`: The URI for the associated namespace authorization. 
+ * @param namespaceAuthorizationUri`: The URI for the associated namespace authorization.
  * @param authorAccount - The account of the author who signs and submits the transaction.
  * @returns The `NamespaceAuthorizationUri` after successfully dispatching the authorization.
  * @throws {SDKErrors.CordDispatchError} If the namespace or authorization does not exist, or if there's an error during dispatch.
@@ -259,38 +258,39 @@ function dispatchDelegateAuthorizationTx(
  *     authorAccount
  * );
  * console.log('Authorization dispatched with URI:', authorizationUri);
- * 
+ *
  */
 export async function dispatchDelegateAuthorization(
   request: INamespaceAuthorization,
   namespaceAuthorizationUri: NamespaceAuthorizationUri,
-  authorAccount: CordKeyringPair,
+  authorAccount: CordKeyringPair
 ): Promise<NamespaceAuthorizationUri> {
   try {
-
-    const namespaceExists = await isNamespaceStored(request.uri);
+    const namespaceExists = await isNamespaceStored(request.uri)
     if (!namespaceExists) {
-        throw new SDKErrors.CordDispatchError(
-            `Namespace URI does not exist: "${request.uri}".`
-        );
+      throw new SDKErrors.CordDispatchError(
+        `Namespace URI does not exist: "${request.uri}".`
+      )
     }
 
-    const authorizationExists = await isNamespaceAuthorizationStored(namespaceAuthorizationUri);
+    const authorizationExists = await isNamespaceAuthorizationStored(
+      namespaceAuthorizationUri
+    )
     if (!authorizationExists) {
-        throw new SDKErrors.CordDispatchError(
-            `Namespace Authorization URI does not exist: "${namespaceAuthorizationUri}".`
-        );
+      throw new SDKErrors.CordDispatchError(
+        `Namespace Authorization URI does not exist: "${namespaceAuthorizationUri}".`
+      )
     }
 
-    const nameSpaceId = uriToIdentifier(request.uri);
-    const delegateId = request.delegateUri.replace("did:cord:3", "");
-    const namespaceAuthorizationId = uriToIdentifier(namespaceAuthorizationUri);
+    const nameSpaceId = uriToIdentifier(request.uri)
+    const delegateId = request.delegateUri.replace('did:cord:3', '')
+    const namespaceAuthorizationId = uriToIdentifier(namespaceAuthorizationUri)
 
     const extrinsic = dispatchDelegateAuthorizationTx(
       request.permission,
       nameSpaceId,
       delegateId,
-      namespaceAuthorizationId,
+      namespaceAuthorizationId
     )
 
     await Chain.signAndSubmitTx(extrinsic, authorAccount)
@@ -321,17 +321,88 @@ export async function dispatchDelegateAuthorization(
  *
  */
 export async function isNamespaceAuthorizationStored(
-    authorizationUri: NamespaceAuthorizationUri
+  authorizationUri: NamespaceAuthorizationUri
 ): Promise<boolean> {
-    try {
-        const api = ConfigService.get('api')
-        const identifier = uriToIdentifier(authorizationUri)
-        const encoded = await api.query.nameSpace.authorizations(identifier) as Option<PalletNamespaceNameSpaceAuthorization>;
+  try {
+    const api = ConfigService.get('api')
+    const identifier = uriToIdentifier(authorizationUri)
+    const encoded = (await api.query.nameSpace.authorizations(
+      identifier
+    )) as Option<PalletNamespaceNameSpaceAuthorization>
 
-        return !encoded.isNone
-    } catch (error) {
-        throw new SDKErrors.CordQueryError(
-        `Error querying authorization existence: ${error}`
-        )
-    }
+    return !encoded.isNone
+  } catch (error) {
+    throw new SDKErrors.CordQueryError(
+      `Error querying authorization existence: ${error}`
+    )
+  }
+}
+
+/**
+ * Dispatches a request to update an existing namespace on the CORD blockchain.
+ *
+ * This function checks if the specified namespace exists. If it does not exist,
+ * an error is thrown. If the namespace is found, it updates the namespace with
+ * the new details provided and submits the transaction to the chain.
+ *
+ * @param namespaceDetails - An object containing the details required to update the namespace, including:
+ *   - `uri`: The unique identifier for the namespace to be updated.
+ *   - `authorizationUri`: The URI for the associated authorization.
+ *   - `digest`: A hash representing the updated content of the namespace.
+ *   - `blob`: Additional data related to the namespace update.
+ * @param authorAccount - The account that will authorize the update of the namespace.
+ * @returns A promise that resolves to an object containing the updated namespace's URI.
+ * @throws {SDKErrors.CordDispatchError} If the namespace does not exist or if an error occurs while dispatching to the chain.
+ *
+ * @example
+ * // Example: Updating an existing namespace
+ * const updatedNamespace = await dispatchUpdateNamespaceToChain({
+ *     uri: 'namespace:cord:example_namespace_uri',
+ *     authorizationUri: 'auth:cord:example_namespace_authorization_uri',
+ *     digest: '0xdef456...',
+ *     blob: 'Updated namespace data blob'
+ * }, authorAccount);
+ * console.log('Updated Namespace URI:', updatedNamespace.uri);
+ *
+ */
+export async function dispatchUpdateRegistryToChain(
+  namespaceDetails: INamespaceUpdate,
+  authorAccount: CordKeyringPair
+): Promise<{ uri: NamespaceUri; authorizationUri: NamespaceAuthorizationUri }> {
+  const namespaceObj = {
+    uri: namespaceDetails.uri,
+    authorizationUri: namespaceDetails.authorizationUri,
+  }
+
+  const namespaceExists = await isNamespaceStored(namespaceDetails.uri)
+
+  if (!namespaceExists) {
+    throw new SDKErrors.CordDispatchError(
+      `Namespace URI does not exist: "${namespaceObj.uri}".`
+    )
+  }
+
+  try {
+    const api = ConfigService.get('api')
+
+    const namespaceId = uriToIdentifier(namespaceDetails.uri)
+    const authorizationId = uriToIdentifier(namespaceDetails.authorizationUri)
+
+    const extrinsic = api.tx.nameSpace.update(
+      namespaceId,
+      namespaceDetails.digest,
+      namespaceDetails.blob,
+      authorizationId
+    )
+
+    await Chain.signAndSubmitTx(extrinsic, authorAccount)
+
+    return namespaceObj
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error)
+    throw new SDKErrors.CordDispatchError(
+      `Error dispatching to chain: "${errorMessage}".`
+    )
+  }
 }

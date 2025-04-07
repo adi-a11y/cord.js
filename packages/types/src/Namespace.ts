@@ -39,3 +39,10 @@ export interface INamespaceAuthorization {
   permission: NamespacePermissionType
   delegatorUri: DidUri
 }
+
+export interface INamespaceUpdate {
+  uri: NamespaceUri
+  authorizationUri: NamespaceAuthorizationUri
+  digest: NamespaceDigest,
+  blob: string | null
+}
